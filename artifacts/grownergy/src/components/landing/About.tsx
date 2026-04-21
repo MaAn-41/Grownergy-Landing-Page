@@ -45,11 +45,27 @@ export function About() {
             <h2 className="text-3xl md:text-5xl font-bold font-display text-foreground mb-6">
               Quiet Confidence.<br />Clean Power.
             </h2>
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
               We believe the transition to sustainable energy shouldn't be chaotic. Grownergy was founded to bring rigorous engineering standards and calm, deliberate execution to solar installation.
             </p>
-            <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              Our mission is to empower homes and businesses to generate their own clean power, seamlessly integrating advanced technology with the natural environment.
+
+            <div className="grid sm:grid-cols-2 gap-4 mb-10">
+              <div className="rounded-2xl border border-border/60 bg-muted/30 p-5">
+                <p className="text-xs font-semibold tracking-[0.2em] uppercase text-secondary mb-2">Our Mission</p>
+                <p className="text-foreground leading-relaxed">
+                  Empower homes and businesses to generate their own clean power through honest engineering and thoughtful design.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-border/60 bg-muted/30 p-5">
+                <p className="text-xs font-semibold tracking-[0.2em] uppercase text-secondary mb-2">Our Vision</p>
+                <p className="text-foreground leading-relaxed">
+                  A world where every roof quietly contributes to a resilient, regenerative energy grid.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-sm font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-4">
+              Why Choose Grownergy
             </p>
 
             <div className="space-y-4 mb-8">

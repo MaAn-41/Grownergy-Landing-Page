@@ -24,11 +24,11 @@ export function Navbar() {
   };
 
   const navLinks = [
+    { name: "Home", id: "home" },
     { name: "Services", id: "services" },
     { name: "About", id: "about" },
     { name: "Projects", id: "projects" },
-    { name: "Benefits", id: "benefits" },
-    { name: "Testimonials", id: "testimonials" },
+    { name: "Contact", id: "contact" },
   ];
 
   return (
