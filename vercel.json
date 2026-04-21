@@ -1,6 +1,6 @@
 {
-  "buildCommand": "pnpm --filter @workspace/grownergy build",
-  "outputDirectory": "artifacts/grownergy/dist/public",
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist",
   "framework": null,
-  "installCommand": "pnpm install"
+  "installCommand": "cd ../.. && pnpm install"
 }
