@@ -61,16 +61,12 @@ router.post("/auth/logout", async (req, res) => {
   }
 });
 
-// GET /api/auth/me
+// GET /api/auth/me — sirf user ki cookie check karo, API key nahi
 router.get("/auth/me", async (req, res) => {
   try {
-    const apiKey = process.env["ERPNEXT_API_KEY"];
-    const apiSecret = process.env["ERPNEXT_API_SECRET"];
-
     const erpRes = await fetch(getErpUrl("/api/method/frappe.auth.get_logged_user"), {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `token ${apiKey}:${apiSecret}`,
         Cookie: req.headers.cookie ?? "",
       },
     });
