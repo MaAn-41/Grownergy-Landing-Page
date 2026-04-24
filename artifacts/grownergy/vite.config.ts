@@ -23,11 +23,13 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: 5173,
-    host: "0.0.0.0",
-  },
-  preview: {
-    port: 4173,
-    host: "0.0.0.0",
-  },
+      port: 5173,
+      host: "0.0.0.0",
+      proxy: {
+        "/api": {
+          target: "http://localhost:3000",
+          changeOrigin: true,
+        },
+      },
+    },
 });

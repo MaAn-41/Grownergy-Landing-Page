@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, CheckCircle2 } from "lucide-react";
+import { MapPin, Phone, Mail, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,15 +8,47 @@ import { Textarea } from "@/components/ui/textarea";
 export function Contact() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json() as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error || "Submission failed");
+      }
+
       setIsSubmitted(true);
-    }, 1000);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Kuch masla aaya, dobara try karein.";
+      setError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -33,7 +65,8 @@ export function Contact() {
               Let's Talk Power.
             </h2>
             <p className="text-lg text-muted-foreground mb-10 max-w-md">
-              Ready to transition to clean energy? Reach out for a site evaluation and a custom proposal.
+              Ready to transition to clean energy? Reach out for a site
+              evaluation and a custom proposal.
             </p>
 
             <div className="space-y-8">
@@ -42,10 +75,14 @@ export function Contact() {
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-foreground">Headquarters</h4>
+                  <h4 className="text-lg font-semibold text-foreground">
+                    Headquarters
+                  </h4>
                   <p className="text-muted-foreground mt-1">
-                    1400 CleanTech Blvd<br />
-                    Suite 200<br />
+                    1400 CleanTech Blvd
+                    <br />
+                    Suite 200
+                    <br />
                     Portland, OR 97209
                   </p>
                 </div>
@@ -56,9 +93,13 @@ export function Contact() {
                   <Phone className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-foreground">Phone</h4>
+                  <h4 className="text-lg font-semibold text-foreground">
+                    Phone
+                  </h4>
                   <p className="text-muted-foreground mt-1">1-800-GROW-NRG</p>
-                  <p className="text-sm text-muted-foreground">Mon-Fri, 8am-6pm PST</p>
+                  <p className="text-sm text-muted-foreground">
+                    Mon-Fri, 8am-6pm PST
+                  </p>
                 </div>
               </div>
 
@@ -67,8 +108,12 @@ export function Contact() {
                   <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-foreground">Email</h4>
-                  <p className="text-muted-foreground mt-1">hello@grownergy.com</p>
+                  <h4 className="text-lg font-semibold text-foreground">
+                    Email
+                  </h4>
+                  <p className="text-muted-foreground mt-1">
+                    hello@grownergy.com
+                  </p>
                 </div>
               </div>
             </div>
@@ -90,54 +135,86 @@ export function Contact() {
                 >
                   <CheckCircle2 className="w-20 h-20 text-secondary" />
                 </motion.div>
-                <h3 className="text-2xl font-bold font-display text-foreground">Message Received</h3>
+                <h3 className="text-2xl font-bold font-display text-foreground">
+                  Message Received
+                </h3>
                 <p className="text-muted-foreground max-w-sm">
-                  Thank you for reaching out. One of our engineers will be in touch within 24 hours.
+                  Thank you for reaching out. One of our engineers will be in
+                  touch within 24 hours.
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="mt-4 rounded-full"
-                  onClick={() => setIsSubmitted(false)}
+                  onClick={() => {
+                    setIsSubmitted(false);
+                    setFormData({ name: "", email: "", message: "" });
+                  }}
                 >
                   Send Another Message
                 </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Error box */}
+                {error && (
+                  <div className="flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 p-3 rounded-xl text-sm">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    {error}
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium text-foreground">
+                  <label
+                    htmlFor="name"
+                    className="text-sm font-medium text-foreground"
+                  >
                     Full Name
                   </label>
                   <Input
                     id="name"
                     required
+                    value={formData.name}
+                    onChange={handleChange}
                     placeholder="John Doe"
                     className="bg-background rounded-xl h-12"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-foreground">
+                  <label
+                    htmlFor="email"
+                    className="text-sm font-medium text-foreground"
+                  >
                     Email Address
                   </label>
                   <Input
                     id="email"
                     type="email"
                     required
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="john@example.com"
                     className="bg-background rounded-xl h-12"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-medium text-foreground">
+                  <label
+                    htmlFor="message"
+                    className="text-sm font-medium text-foreground"
+                  >
                     Message
                   </label>
                   <Textarea
                     id="message"
                     required
+                    value={formData.message}
+                    onChange={handleChange}
                     placeholder="Tell us about your project..."
                     className="bg-background rounded-xl min-h-[150px] resize-none"
                   />
                 </div>
+
                 <Button
                   type="submit"
                   size="lg"

@@ -1,3 +1,14 @@
+import { createRequire } from "module";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+// Load .env file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const require = createRequire(import.meta.url);
+const dotenv = require("dotenv");
+dotenv.config({ path: resolve(__dirname, "../.env") });
+
 import app from "./app";
 import { logger } from "./lib/logger";
 

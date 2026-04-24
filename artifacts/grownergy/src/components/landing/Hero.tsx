@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowDown } from "lucide-react";
+import { ArrowRight, ArrowDown, ShoppingBag } from "lucide-react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import heroImg from "@/assets/images/hero-solar.png";
 
 export function Hero() {
+  const [, navigate] = useLocation();
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -76,9 +78,10 @@ export function Hero() {
             size="lg"
             variant="outline"
             className="rounded-full px-8 py-6 text-lg group bg-background/50 backdrop-blur-sm border-foreground/10 hover:bg-background/80"
-            onClick={() => scrollTo("services")}
+            onClick={() => navigate("/products")}
           >
-            Learn More
+            <ShoppingBag className="mr-2 w-5 h-5" />
+            Shop Products
           </Button>
         </motion.div>
 
