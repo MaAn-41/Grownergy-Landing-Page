@@ -69,7 +69,9 @@ export async function getLoggedUser(): Promise<CurrentUser | null> {
 }
 
 /**
- * Frappe self-signup — Express ke through
+ * POST /api/auth/signup — Express ke through user banao
+ * Password nahi bheja jata — ERPNext welcome email bhejega
+ * jisme user khud password set karega.
  */
 export async function signUp(email: string, fullName: string): Promise<{ message: number | string }> {
   const { data } = await api.post<{ message: number | string }>(
@@ -86,6 +88,6 @@ export function resolveImageUrl(image?: string | null): string | null {
   if (!image) return null;
   if (/^https?:\/\//i.test(image)) return image;
   const base = (import.meta.env.VITE_ERPNEXT_URL ?? "").replace(/\/$/, "");
-  if (!base) return image;
+  if (!base) return base;
   return `${base}${image.startsWith("/") ? "" : "/"}${image}`;
 }
