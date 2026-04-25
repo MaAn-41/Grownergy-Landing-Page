@@ -2,9 +2,9 @@ import { Router, type IRouter } from "express";
 
 const router: IRouter = Router();
 
-// Simple in-memory cache
+// ─── In-memory cache ──────────────────────────────────────────────────────────
 const cache = new Map<string, { data: unknown; expiresAt: number }>();
-const CACHE_TTL = 30 * 60 * 1000; // 5 minute cache
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 const getFromCache = (key: string) => {
   const cached = cache.get(key);
@@ -34,17 +34,19 @@ const getErpUrl = (path: string) => {
   return `${base}${path}`;
 };
 
-// GET /api/items — sab items (cache ke saath)
+// ─── GET /api/items ───────────────────────────────────────────────────────────
 router.get("/items", async (req, res) => {
   try {
-    const { search, limit = "50" } = req.query as { search?: string; limit?: string };
+    const { search, limit = "60" } = req.query as { search?: string; limit?: string };
 
     const cacheKey = `items:${search ?? ""}:${limit}`;
 
-    // Cache check
+    // ✅ Server-side cache check
     const cached = getFromCache(cacheKey);
     if (cached) {
       res.setHeader("X-Cache", "HIT");
+      // ✅ Browser ko bhi bata do — 2 min tak fresh hai
+      res.setHeader("Cache-Control", "public, max-age=120, stale-while-revalidate=300");
       res.json({ data: cached });
       return;
     }
@@ -79,10 +81,10 @@ router.get("/items", async (req, res) => {
 
     const data = await erpRes.json() as { data: unknown[] };
 
-    // Cache mein save karo
     setCache(cacheKey, data.data);
 
     res.setHeader("X-Cache", "MISS");
+    res.setHeader("Cache-Control", "public, max-age=120, stale-while-revalidate=300");
     res.json({ data: data.data });
   } catch (err) {
     console.error("Items route error:", err);
@@ -90,7 +92,7 @@ router.get("/items", async (req, res) => {
   }
 });
 
-// GET /api/items/:name — single item (cache ke saath)
+// ─── GET /api/items/:name ─────────────────────────────────────────────────────
 router.get("/items/:name", async (req, res) => {
   try {
     const { name } = req.params;
@@ -99,6 +101,7 @@ router.get("/items/:name", async (req, res) => {
     const cached = getFromCache(cacheKey);
     if (cached) {
       res.setHeader("X-Cache", "HIT");
+      res.setHeader("Cache-Control", "public, max-age=120, stale-while-revalidate=300");
       res.json({ data: cached });
       return;
     }
@@ -120,6 +123,7 @@ router.get("/items/:name", async (req, res) => {
     setCache(cacheKey, data.data);
 
     res.setHeader("X-Cache", "MISS");
+    res.setHeader("Cache-Control", "public, max-age=120, stale-while-revalidate=300");
     res.json({ data: data.data });
   } catch (err) {
     console.error("Item route error:", err);
